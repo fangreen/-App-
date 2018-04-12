@@ -64,180 +64,180 @@
 </body>
 </html>
 <script>
-    $(function(){
-        $(".right>p").text("你好："+$.cookie("id")+"!");
-        $(".msg").click(function(){
-            $.ajax({
-            url:"/users/pmsg",
-            type:"get",
-            success:function(data){
-                var str="";
-                str=`<div class="con">
-                        <ul class="ul_left">
-                                <li>姓名</li>
-                                <li>学号</li>
-                                <li>专业</li>
-                                <li>年级</li>
-                                <li>学院</li>
-                                <li>电话</li>
-                                <li>身份证号</li>
-                                <li>家庭住址</li>
-                            </ul>
-                            <ul class="ul_right">
-                              <li>${data.username}</li>
-                              <li>${data.userid}</li>
-                              <li>${data.object}</li>
-                              <li>${data.clas}</li>
-                              <li>${data.college}</li>
-                              <li>${data.phone}</li>
-                              <li>${data.ide}</li>
-                              <li>${data.address}</li>
-                         </ul>
-                </div>`
-                $(".right").html(str);
-            }
-        })
-        });
-        $(".remsg").click(function(){
-            $.ajax({
-            url:"/users/pmsg",
-            type:"get",
-            success:function(data){
-            var str="";
-               str=`
-           <form class="form-horizontal form_c form_r form_re" method="post" action="/users/remsg"> 
-            <div class="form-group">
-                <label for="inputUsername3" class="col-sm-2 control-label">学号</label>
-                <div class="col-sm-6">
-                <input type="text" class="form-control" id="inputUsername3" name="userid" value="${data.userid}" readonly unselectable="on">
-                </div>
-            </div>
-            <div class="form-group">
-                    <label for="inputUsername3" class="col-sm-2 control-label">姓名</label>
-                    <div class="col-sm-6">
-                    <input type="text" class="form-control" id="inputUsername3" name="username" value="${data.username}">
-                    </div>
-            </div>
-            <div class="form-group">
-                <label for="inputPassword3" class="col-sm-2 control-label">密码</label>
-                <div class="col-sm-6">
-                <input type="password" class="form-control" id="inputPassword3"  name="password" value="${data.password}">
-                </div>
-            </div>
-            <div class="form-group">
-                    <label for="inputPassword3" class="col-sm-2 control-labe">确认密码</label>
-                    <div class="col-sm-6">
-                    <input type="password" class="form-control" id="inputPassword3"  name="password1" value="${data.password}">
-                    </div>
-            </div>
-            <div class="form-group">
-                <label for="inputUsername3" class="col-sm-2 control-label">专业</label>
-                <div class="col-sm-6">
-                <input type="text" class="form-control" id="inputUsername3" name="object" value="${data.object}">
-                </div>
-        </div>
-        <div class="form-group">
-            <label for="inputUsername3" class="col-sm-2 control-label">学院</label>
-            <div class="col-sm-6">
-                <input type="text" class="form-control" id="inputUsername3" name="college" value="${data.college}">
-            </div>
-        </div>
-    <div class="form-group">
-        <label for="inputUsername3" class="col-sm-2 control-label">年级</label>
-        <div class="col-sm-6">
-            <input type="text" class="form-control" id="inputUsername3" name="clas" value="${data.clas}">
-        </div>
-        </div>
-        <div class="form-group">
-            <label for="inputUsername3" class="col-sm-2 control-label">电话</label>
-            <div class="col-sm-6">
-            <input type="text" class="form-control" id="inputUsername3" name="phone" value="${data.phone}">
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="inputUsername3" class="col-sm-2 control-label">身份证号</label>
-            <div class="col-sm-6">
-                <input type="text" class="form-control" id="inputUsername3" name="ide" value="${data.ide}">
-            </div>
-            </div>
-            <div class="form-group">
-                <label for="inputUsername3" class="col-sm-2 control-label">家庭住址</label>
-                <div class="col-sm-6">
-                <input type="text" class="form-control" id="inputUsername3" name="address" value="${data.address}">
-                </div>
-            </div>
-        <div class="form-group">
-            <div class="col-sm-offset-2 col-sm-10">
-            <input type="submit" class="btn btn-default btn3" value="提交">
-            </div>
-        </div>
-        </div>
-    </form> `
-     $(".right").html(str);
-          }
-        })
-    });
-    $(".grade").click(function(){
-        var str1='';
-            str1=`<table class="table table-hover">
-                        <thead>
-                          <tr>
-                            <th>学号</th>
-                            <th>高等数学</th>
-                            <th>专业英语</th>
-                            <th>java</th>
-                            <th>体育</th>
-                            <th>php</th>
-                            <th>计算机网络</th>
-                            <th>思修</th>
-                            <th>线性代数</th>                            
-                          </tr>
-                        </thead>  
-                        <tbody>
-                        </tbody>  
-                    </table>
-                    `
-              $(".right").html(str1);
-         $.ajax({
-             url:"/users/pmsg",
-             type:"get",
-             success:function(data){
-                 var str4='';
-                $.each(data,function(i){
-                    if(data.math==undefined){
-                             str4=`
-                        <tr>
-                            <th scope="row">${data.userid}</th>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>---</td>
-                            <td>---</td>                            
-                          </tr>`
-                    }else{
-                        str4=`
-                        <tr>
-                            <th scope="row">${data.userid}</th>
-                            <td>${data.math}</td>
-                            <td>${data.English}</td>
-                            <td>${data.java}</td>
-                            <td>${data.sport}</td>
-                            <td>${data.php}</td>
-                            <td>${data.network}</td>
-                            <td>${data.think}</td>
-                            <td>${data.sidemath}</td>                            
-                          </tr>`
-                    }
+    // $(function(){
+    //     $(".right>p").text("你好："+$.cookie("id")+"!");
+    //     $(".msg").click(function(){
+    //         $.ajax({
+    //         url:"/users/pmsg",
+    //         type:"get",
+    //         success:function(data){
+    //             var str="";
+    //             str=`<div class="con">
+    //                     <ul class="ul_left">
+    //                             <li>姓名</li>
+    //                             <li>学号</li>
+    //                             <li>专业</li>
+    //                             <li>年级</li>
+    //                             <li>学院</li>
+    //                             <li>电话</li>
+    //                             <li>身份证号</li>
+    //                             <li>家庭住址</li>
+    //                         </ul>
+    //                         <ul class="ul_right">
+    //                           <li>${data.username}</li>
+    //                           <li>${data.userid}</li>
+    //                           <li>${data.object}</li>
+    //                           <li>${data.clas}</li>
+    //                           <li>${data.college}</li>
+    //                           <li>${data.phone}</li>
+    //                           <li>${data.ide}</li>
+    //                           <li>${data.address}</li>
+    //                      </ul>
+    //             </div>`
+    //             $(".right").html(str);
+    //         }
+    //     })
+    //     });
+    //     $(".remsg").click(function(){
+    //         $.ajax({
+    //         url:"/users/pmsg",
+    //         type:"get",
+    //         success:function(data){
+    //         var str="";
+    //            str=`
+    //        <form class="form-horizontal form_c form_r form_re" method="post" action="/users/remsg"> 
+    //         <div class="form-group">
+    //             <label for="inputUsername3" class="col-sm-2 control-label">学号</label>
+    //             <div class="col-sm-6">
+    //             <input type="text" class="form-control" id="inputUsername3" name="userid" value="${data.userid}" readonly unselectable="on">
+    //             </div>
+    //         </div>
+    //         <div class="form-group">
+    //                 <label for="inputUsername3" class="col-sm-2 control-label">姓名</label>
+    //                 <div class="col-sm-6">
+    //                 <input type="text" class="form-control" id="inputUsername3" name="username" value="${data.username}">
+    //                 </div>
+    //         </div>
+    //         <div class="form-group">
+    //             <label for="inputPassword3" class="col-sm-2 control-label">密码</label>
+    //             <div class="col-sm-6">
+    //             <input type="password" class="form-control" id="inputPassword3"  name="password" value="${data.password}">
+    //             </div>
+    //         </div>
+    //         <div class="form-group">
+    //                 <label for="inputPassword3" class="col-sm-2 control-labe">确认密码</label>
+    //                 <div class="col-sm-6">
+    //                 <input type="password" class="form-control" id="inputPassword3"  name="password1" value="${data.password}">
+    //                 </div>
+    //         </div>
+    //         <div class="form-group">
+    //             <label for="inputUsername3" class="col-sm-2 control-label">专业</label>
+    //             <div class="col-sm-6">
+    //             <input type="text" class="form-control" id="inputUsername3" name="object" value="${data.object}">
+    //             </div>
+    //     </div>
+    //     <div class="form-group">
+    //         <label for="inputUsername3" class="col-sm-2 control-label">学院</label>
+    //         <div class="col-sm-6">
+    //             <input type="text" class="form-control" id="inputUsername3" name="college" value="${data.college}">
+    //         </div>
+    //     </div>
+    // <div class="form-group">
+    //     <label for="inputUsername3" class="col-sm-2 control-label">年级</label>
+    //     <div class="col-sm-6">
+    //         <input type="text" class="form-control" id="inputUsername3" name="clas" value="${data.clas}">
+    //     </div>
+    //     </div>
+    //     <div class="form-group">
+    //         <label for="inputUsername3" class="col-sm-2 control-label">电话</label>
+    //         <div class="col-sm-6">
+    //         <input type="text" class="form-control" id="inputUsername3" name="phone" value="${data.phone}">
+    //         </div>
+    //     </div>
+    //     <div class="form-group">
+    //         <label for="inputUsername3" class="col-sm-2 control-label">身份证号</label>
+    //         <div class="col-sm-6">
+    //             <input type="text" class="form-control" id="inputUsername3" name="ide" value="${data.ide}">
+    //         </div>
+    //         </div>
+    //         <div class="form-group">
+    //             <label for="inputUsername3" class="col-sm-2 control-label">家庭住址</label>
+    //             <div class="col-sm-6">
+    //             <input type="text" class="form-control" id="inputUsername3" name="address" value="${data.address}">
+    //             </div>
+    //         </div>
+    //     <div class="form-group">
+    //         <div class="col-sm-offset-2 col-sm-10">
+    //         <input type="submit" class="btn btn-default btn3" value="提交">
+    //         </div>
+    //     </div>
+    //     </div>
+    // </form> `
+//      $(".right").html(str);
+//           }
+//         })
+//     });
+//     $(".grade").click(function(){
+//         var str1='';
+//             str1=`<table class="table table-hover">
+//                         <thead>
+//                           <tr>
+//                             <th>学号</th>
+//                             <th>高等数学</th>
+//                             <th>专业英语</th>
+//                             <th>java</th>
+//                             <th>体育</th>
+//                             <th>php</th>
+//                             <th>计算机网络</th>
+//                             <th>思修</th>
+//                             <th>线性代数</th>                            
+//                           </tr>
+//                         </thead>  
+//                         <tbody>
+//                         </tbody>  
+//                     </table>
+//                     `
+//               $(".right").html(str1);
+//          $.ajax({
+//              url:"/users/pmsg",
+//              type:"get",
+//              success:function(data){
+//                  var str4='';
+//                 $.each(data,function(i){
+//                     if(data.math==undefined){
+//                              str4=`
+//                         <tr>
+//                             <th scope="row">${data.userid}</th>
+//                             <td>---</td>
+//                             <td>---</td>
+//                             <td>---</td>
+//                             <td>---</td>
+//                             <td>---</td>
+//                             <td>---</td>
+//                             <td>---</td>
+//                             <td>---</td>                            
+//                           </tr>`
+//                     }else{
+//                         str4=`
+//                         <tr>
+//                             <th scope="row">${data.userid}</th>
+//                             <td>${data.math}</td>
+//                             <td>${data.English}</td>
+//                             <td>${data.java}</td>
+//                             <td>${data.sport}</td>
+//                             <td>${data.php}</td>
+//                             <td>${data.network}</td>
+//                             <td>${data.think}</td>
+//                             <td>${data.sidemath}</td>                            
+//                           </tr>`
+//                     }
                    
-                    $(".table>tbody").html(str4);
-                    $(".tck").css("height","600px");
-                })
-            }
-         })
-     })
- })
+//                     $(".table>tbody").html(str4);
+//                     $(".tck").css("height","600px");
+//                 })
+//             }
+//          })
+//      })
+//  })
 
 </script>

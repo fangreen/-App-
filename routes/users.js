@@ -9,85 +9,7 @@ var CONN_DB_STR = "mongodb://39.108.136.59:27017/react";
 router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
-router.get("/pmsg",function(req,res){
-  console.log(req.cookies);
-  MongoClient.connect(CONN_DB_STR,(err,db)=>{
-          if(err) throw err;
-          console.log("数据库连接成功");
-          var student = db.collection("student");
-          var data = {userid:req.cookies.id};
-          
-          student.find(data,{_id:0,username:1,password:1,college:1,clas:1,phone:1,ide:1,address:1,object:1,math:1,English:1,sport:1,sidemath:1,network:1,java:1,php:1,think:1}).toArray((err,result)=>{
-              if(err) throw err;
-              res.send({userid:req.cookies.id,username:result[0].username,college:result[0].college,clas:result[0].clas,phone:result[0].phone,ide:result[0].ide,address:result[0].address,object:result[0].object,math:result[0].math,English:result[0].English,java:result[0].java,sport:result[0].sport,php:result[0].php,network:result[0].network,think:result[0].think,sidemath:result[0].sidemath,password:result[0].password,title: '学生信息管理系统'});
-              db.close();
-            })
-      })
-    
-})
-router.post("/remsg",function(req,res){
-  var userid=req.body.userid;
-  var password=req.body.password;
-  var username=req.body.username;
-  var college=req.body.college;
-  var clas=req.body.clas;
-  var phone=req.body.phone;
-  var ide=req.body.ide;
-  var address=req.body.address;
-  var object=req.body.object;
-  MongoClient.connect(CONN_DB_STR,(err,db)=>{
-    if(err) throw err;
-    console.log("数据库连接成功");
-    var student = db.collection("student");
-    student.update({userid:userid},{
-      $set:{
-         password:password,
-         username:username,
-         college:college,
-         clas:clas,
-         phone:phone,
-         ide:ide,
-         address:address,
-         object:object
-        }
-      },(err,result)=>{
-        if(err) throw err;
-        res.render('main', { title: '学生信息管理系统' });
-      })
-      db.close();
-  })
-});
-router.post("/magmsg",function(req,res){
-  var userid=req.body.userid;
-  var password=req.body.password;
-  var username=req.body.username;
-  var college=req.body.college;
-  var clas=req.body.clas;
-  var phone=req.body.phone;
-  var ide=req.body.ide;
-  var address=req.body.address;
-  var object=req.body.object;
-  MongoClient.connect(CONN_DB_STR,(err,db)=>{
-    if(err) throw err;
-    console.log("数据库连接成功");
-    var student = db.collection("student");
-    student.update({userid:userid},{
-      $set:{
-         username:username,
-         college:college,
-         clas:clas,
-         phone:phone,
-         ide:ide,
-         address:address,
-         object:object
-        }
-      },(err,result)=>{
-        if(err) throw err;
-        res.render('magmain', { title: '学生信息管理系统' });
-      })
-      db.close();
-  })
-});
+
 //管理员登录
 router.post("/maglogin",function(req,res){
   var postData = req.body;
@@ -120,60 +42,34 @@ router.post("/maglogin",function(req,res){
     }
   })
 });
-router.get("/smsg",function(req,res){
+//查找所有用户
+router.post("/usermsg",function(req,res){
+  var page = req.body.page;
+  var pagesize = parseInt(req.body.pageSize);
+  var bpage = (page*pagesize)-pagesize;
+  var apage = page*pagesize;
   MongoClient.connect(CONN_DB_STR,(err,db)=>{
-    var student = db.collection("student");
-    student.find({},{_id:0}).toArray((err,result)=>{
-      if(err) throw err;
-      res.send(result);
-    });
-  })
-});
-router.get("/demsg",function(req,res){
-  MongoClient.connect(CONN_DB_STR,(err,db)=>{
-    if(err) throw err;
-    var student = db.collection("student");
-    console.log(req.query);
-    student.deleteOne({userid:req.query.dataid},(err,result)=>{
-      console.log("删除成功");
-      res.send("1");
-      db.close();
+    var user = db.collection("user");
+    user.find().toArray((err,result)=>{
+      user.find().limit(pagesize).skip(bpage).toArray((err,result1)=>{
+        if(err) throw err;
+        res.send({rows:result1,total:result.length});
+      });
     })
   })
 });
-router.post("/mgrade",function(req,res){
-  var userid=req.body.userid;
-  var math=req.body.math;
-  var English=req.body.English;
-  var java=req.body.java;
-  var sport=req.body.sport;
-  var php=req.body.php;
-  var network=req.body.network;
-  var think=req.body.think;
-  var sidemath=req.body.sidemath;
-  MongoClient.connect(CONN_DB_STR,(err,db)=>{
-    if(err) throw err;
-    console.log("数据库连接成功");
-    var student = db.collection("student");
-    student.update({userid:userid},{
-      $set:{
-         math:math,
-         English:English,
-         java:java,
-         sport:sport,
-         php:php,
-         network:network,
-         think:think,
-         sidemath:sidemath
-        }
-      },(err,result)=>{
-        if(err) throw err;
-        res.render('magmain', { title: '学生信息管理系统' });
-      })
-      db.close();
-  })
-})
 
+//查找指定用户
+router.post("/username",function(req,res){
+  var uname = req.body.uname;
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    var user = db.collection("user");
+    user.find({username:uname}).toArray((err,result)=>{
+      if(err) throw err;
+      res.send({rows:result,total:result.length});
+    })
+  })
+});
 //上传图片
 router.post("/upload",function(req,res){
   var tags = req.body.tags;
@@ -273,4 +169,203 @@ router.post("/pic_all",function(req,res){
     });
   });
 
+
+//删除图片
+var fs = require("fs");
+var path = require("path");
+router.post('/deloader', function(req, res) {
+  var img_url = req.body.url;
+  var ename = req.body.ename;
+  var url = "../public/avatar/"+img_url;
+  var wq = "http://localhost:7620/avatar/"+img_url;
+deleteFolderRecursive = function(url) {
+  var files = [];
+  //判断给定的路径是否存在
+  if(fs.existsSync(url)) {
+      var curPath = url;
+      fs.unlinkSync(curPath);
+  }else{
+    console.log("给定的路径不存在，请给出正确的路径");
+  }
+};
+deleteFolderRecursive(url);
+
+MongoClient.connect(CONN_DB_STR,(err,db)=>{
+  if(err) throw err;
+  var paper = db.collection("paper");
+  var sql = db.collection(ename);
+  var recommend = db.collection("recommend");
+  var comment = db.collection("comment");
+  var shoucang = db.collection("shoucang");
+  var hot = db.collection("hot");
+  paper.deleteOne({cid:img_url},(err,result)=>{
+    sql.deleteOne({cid:img_url},(err,result1)=>{
+      comment.remove({"wq":wq},(err,result2)=>{
+        shoucang.remove({"wq":wq},(err,result3)=>{
+          hot.deleteOne({wq:wq},(err,result4)=>{
+           recommend.deleteOne({cid:img_url},(err,result1)=>{
+            res.send("1");
+            db.close();
+           })
+         })
+        })
+      })
+    })
+   
+  })
+ })
+})
+
+
+router.post("/un_apl",function(req,res){
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    if(err) throw err;
+    var comment = db.collection("comment");
+    comment.find().toArray((err,result)=>{
+      if(err) throw err;
+      res.send(result);
+    });
+  })
+})
+//获取用户限制所有评论
+router.post("/apl",function(req,res){
+  var username = req.body.user;
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    if(err) throw err;
+    var comment = db.collection("comment");
+    comment.find({user:username}).toArray((err,result)=>{
+      if(err) throw err;
+      res.send(result);
+    });
+  })
+})
+//删除评论
+router.post("/del_comment",function(req,res){
+  var dtime = req.body.dtime;
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    if(err) throw err;
+    var comment = db.collection("comment");
+    comment.deleteOne({dtime:dtime},(err,result)=>{
+      if(err) throw err;
+      res.send("0");
+    })
+  })
+})
+//添加用户
+router.post("/re_success",(req,res)=>{
+  var username=req.body.username;
+  var password=req.body.password;
+  var insertData = function(db,callback){
+    var conn = db.collection("user");
+    async.waterfall([
+      function(callback){
+         conn.find({username:username}).toArray((err,result)=>{
+           console.log(result);
+             if(err) throw err;
+             if(result.length>0){
+               callback(null,true);   // true 表示已经注册
+             }else{
+               callback(null,false);
+             }
+         })
+      },
+      function(arg,callback){
+        if(!arg){
+          var date = new Date();
+          conn.insert({username:username,password:password,time:date},(err,result)=>{
+            if(err) throw err;
+            console.log(result);
+            callback(null,"0")
+          })
+        }else{
+          callback(null,"1")
+        }
+      }
+    ],function(err,result){
+        if(err) throw err;
+        callback(result);
+    })
+}
+//连接数据库
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    if(err) throw err;
+    insertData(db,function(result){
+      if(result==0){
+        res.send("0");
+      }else{
+        res.send("1");
+      }
+      db.close();
+    })
+  })
+});
+//通过_id查找user
+router.post("/edit_user",function(req,res){
+  var id = req.body.id;
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    if(err) throw err;
+    var user = db.collection("user");
+    user.find().toArray((err,result)=>{
+      if(err) throw err;
+      for(var i=0;i<result.length;i++){
+        if(result[i]._id==id){
+          res.send({username:result[i].username,password:result[i].password});
+        }
+      }
+    });
+  })
+})
+//删除用户
+router.post("/delete_user",function(req,res){
+  var username = req.body.username;
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    if(err) throw err;
+    var user = db.collection("user");
+    user.deleteOne({username:username},(err,result)=>{
+      if(err) throw err;
+      res.send("0");
+    });
+  })
+})
+
+//修改密码
+router.post("/edit_up",function(req,res){
+  var username = req.body.username;
+  var password = req.body.password;
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    if(err) throw err;
+    var user = db.collection("user"); 
+    user.update({username:username},{
+      $set:{
+         password:password
+        }
+      },(err,result)=>{
+        if(err) throw err;
+        res.send("0");
+      })
+   db.close();
+  })
+ 
+})
+
+//搜索壁纸
+router.post("/swp",function(req,res){
+  var wp = req.body.wp;
+  var awp=[];
+  MongoClient.connect(CONN_DB_STR,(err,db)=>{
+    if(err) throw err;
+    var paper = db.collection("paper");
+    paper.find().toArray((err,result)=>{
+      if(err) throw err;
+      var len = result.length;
+      for(var i=0;i<len;i++){
+        var patt1=new RegExp(wp);
+        if(patt1.test(result[i].tags)){
+          awp[i]=result[i];
+        }
+      }
+      res.send(awp);
+    })
+  })
+})
 module.exports = router;

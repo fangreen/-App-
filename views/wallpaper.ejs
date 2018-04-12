@@ -48,10 +48,13 @@
     </div>
     <div class="search">
         <h3 class="sousuo">壁纸搜索</h3>
-        <input type="text" placeholder="壁纸搜索">
+        <p>全部</p>
+        <input class="sw" type="text" placeholder="壁纸搜索">
     </div>
+    <input class="delete" value="删除壁纸" type="button">
 </form>
-<div class="pic_all"></div>
+<button class="quxiao">取 消</button>
+<div class="pic_all" id="pic_all"></div>
 </div>
  <script>
      $(function(){
@@ -61,11 +64,98 @@
              type:"post",
              success:function(data){
                  $.each(data,function(i){
-                     str+="<img src="+ data[i].wq+">";
+                     str+="<img class='imgs' data-src="+ data[i].wq+" ename="+data[i].ename+" data_url="+ data[i].cid+" src='/images/timg.gif'><span class='glyphicon glyphicon-remove-circle'></span>";
                  })
                  $(".pic_all").html(str);
+                 lazy();
              }
          })
+         //全部壁纸
+         $(".search>p").click(function(){
+            var str3="";
+            $.ajax({
+                url:"/users/pic_all",
+                type:"post",
+                success:function(data){
+                    $.each(data,function(i){
+                       str3+="<img class='imgs' data-src="+ data[i].wq+" ename="+data[i].ename+" data_url="+ data[i].cid+" src='/images/timg.gif'><span class='glyphicon glyphicon-remove-circle'></span>";
+                    })
+                    $(".pic_all").html(str3);
+                    lazy();
+                }
+            })
+         })
+           //搜索壁纸
+         $(".sw").change(function(){
+             var wp_val = $(".sw").val();
+             var str6 = ""
+             $.ajax({
+                 url:"/users/swp",
+                 type:"post",
+                 data:{wp:wp_val},
+                 success:function(data){
+                     if(data.length!=0){
+                            $.each(data,function(i){
+                                if(data[i]!=null){
+                                    str6+="<img class='imgs' data-src="+ data[i].wq+" ename="+data[i].ename+" data_url="+ data[i].cid+" src='/images/timg.gif'><span class='glyphicon glyphicon-remove-circle'></span>";
+                                }
+                            })
+                            $(".pic_all").html(str6);
+                            lazy();
+                        }else{
+                          str6="<p>暂时没有您要搜索的图片。。。。。。</p>";
+                          $(".pic_all").html(str6);
+                          lazy();
+                        }
+                      }
+             })
+         })
+         $(".delete").click(function(){
+             $(".pic_all>span").css("display","block");
+             $(".quxiao").css("display","block");
+             $(".pic_all>span").on("click",function(){
+                var url = $(this).prevAll().attr("data_url");
+                var ename = $(this).prevAll().attr("ename");
+                 $.ajax({
+                     url:"/users/deloader",
+                     type:"post",
+                     data:{
+                         url:url,
+                         ename:ename
+                     },
+                     success:function(data){
+                         console.log(data);
+                     }
+                 })
+                 $(this).prevAll().remove();
+                 $(this).remove();
+                
+             })
+         })
+         $(".quxiao").click(function(){
+            $(".quxiao").css("display","none");
+            $(".pic_all>span").css("display","none");
+         })
+
+       //懒加载
+
+        function lazy(){
+        var  scrollTop = $(".pic_all").scrollTop();
+        var imgs = Array.from(document.querySelectorAll('.imgs'));
+        lazyLoad();
+        $(".pic_all").scroll(function(){
+            scrollTop =  $(".pic_all").scrollTop();
+            lazyLoad(); 
+        })
+        function lazyLoad(){
+            imgs.forEach((item,index)=>{
+                if( item.offsetTop < window.innerHeight + scrollTop ){
+                    item.setAttribute('src',item.dataset.src)
+                }
+            })
+        }
+
+       }
      })
  </script>
 <script type="text/javascript">
